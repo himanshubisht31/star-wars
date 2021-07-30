@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="stylesheet" href="index.css" />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <title>Starwars</title>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/12/maxresdefault-13.jpg?auto=format&q=60&fit=max&w=930"
+        alt=""
+      />
+
+      <div class="search">
+        <input
+          type="text"
+          id="inp"
+          placeholder="Search By Name"
+          oninput="throttle()"
+        />
+        <button onclick="videoData()">
+          <span class="material-icons"> search </span>
+        </button>
+      </div>
+    </div>
+
+    <div id="charData"></div>
+  </body>
+</html>
+
+<script>
+  let mainDiv = document.getElementById("charData");
+  let timer;
+
+  function throttle() {
+    if (timer) {
+      return false;
+    }
+
+    timer = setTimeout(() => {
+      main();
+      timer = undefined;
+    }, 500);
+
+
+  }
+
+  async function main() {
+    // mainDiv.innerHTML = null;
+  
+    let character = await starWars();
+
+    appendData(character);
+  }
+
+  async function starWars() {
+    var query = document.getElementById("inp").value;
+
+    if (query.length <= 2) return false;
+
+    var res = await fetch(`https://swapi.dev/api/people/?search=${query}`);
+
+    var data = await res.json();
+
+    return data.results;
+  }
+
+  function appendData(character) {
+    let div = document.createElement("div");
+     mainDiv.innerHTML = null;
+    // console.log(character);
+
+    let nam = document.createElement("p");
+    let hei = document.createElement("p");
+    let ma = document.createElement("p");
+    let hair = document.createElement("p");
+    let skin = document.createElement("p");
+
+    // name height mass hair_color skin_color
+
+    character.forEach(({ name, height, mass, hair_color, skin_color }) => {
+      nam.innerHTML = `   Name : <span class="title">${name}</span>`;
+      hei.innerHTML = `Height :<span class="title">${height}</span>`;
+      ma.innerHTML = `Mass : <span class="title">${mass}</span>`;
+      hair.innerHTML = `Hair Color : <span class="title">${hair_color}</span>`;
+      skin.innerHTML = `Skin Color :<span class="title"> ${skin_color}</span>`;
+
+      div.append(nam, hei, ma, hair, skin);
+      mainDiv.append(div);
+     
+    });
+  }
+</script>
